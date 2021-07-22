@@ -27,6 +27,7 @@ enum Code {
   kD0 = 421,
   kD0bar = -421,
   kDPlus = 411,
+  kDs = 431,
   kLambdaCPlus = 4122,
   kXiCPlus = 4232,
   kJpsi = 443
@@ -330,6 +331,51 @@ static const std::vector<std::string> pTBinLabels = {
 // column labels
 static const std::vector<std::string> cutVarLabels = {"deltaM", "pT Pi", "pT K", "decay length", "normalized decay length XY", "cos pointing angle", "cos pointing angle XY", "max normalized deltaIP"};
 } // namespace hf_cuts_dplus_topikpi
+
+namespace hf_cuts_ds_tokkpi
+{
+static const int npTBins = 9;
+static const int nCutVars = 11;
+// default values for the pT bin edges (can be used to configure histogram axis)
+// offset by 1 from the bin numbers in cuts array
+constexpr double pTBins[npTBins + 1] = {
+  2.,
+  3.,
+  4.,
+  5.,
+  6.,
+  8.,
+  12.,
+  16.};
+auto pTBins_v = std::vector<double>{pTBins, pTBins + npTBins + 1};
+
+// default values for the cuts
+// selections from pp at 5 TeV 2017 analysis https://alice-notes.web.cern.ch/node/808
+constexpr double cuts[npTBins][nCutVars] = {{0.2, 0.3, 0.3, 0.02, 4., 0.92, 0.92, 0.03, 0.010, 0.10, 0.14},  /* 2  < pT < 3  */
+                                            {0.2, 0.3, 0.3, 0.02, 4., 0.92, 0.92, 0.03, 0.010, 0.10, 0.14},  /* 3  < pT < 4  */
+                                            {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.05, 0.12},  /* 4  < pT < 5  */
+                                            {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.05, 0.12},  /* 5  < pT < 6  */
+                                            {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.05, 0.12},  /* 6  < pT < 8  */
+                                            {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.00, 0.12},  /* 8  < pT < 12 */
+                                            {0.2, 0.3, 0.3, 0.05, 4., 0.85, 0.85, 0.03, 0.015, 0.00, 0.12}}  /* 12 < pT < 16 */
+
+
+// row labels
+static const std::vector<std::string> pTBinLabels = {
+  "pT bin 0",
+  "pT bin 1",
+  "pT bin 2",
+  "pT bin 3",
+  "pT bin 4",
+  "pT bin 5",
+  "pT bin 6",
+  "pT bin 7",
+  "pT bin 8",
+  "pT bin 9"};
+
+// column labels
+static const std::vector<std::string> cutVarLabels = {"deltaM", "pT Pi", "pT K", "decay length", "normalized decay length XY", "cos pointing angle", "cos pointing angle XY", "sigma vertex", "Delta mass phi", "abs cos pointing angle ^3", "d0"};
+} // namespace hf_cuts_ds_tokkpi
 
 namespace hf_cuts_xic_topkpi
 {

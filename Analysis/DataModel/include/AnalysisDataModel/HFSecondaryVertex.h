@@ -532,6 +532,32 @@ auto InvMassDPlus(const T& candidate)
   return candidate.m(array{RecoDecay::getMassPDG(kPiPlus), RecoDecay::getMassPDG(kKPlus), RecoDecay::getMassPDG(kPiPlus)});
 }
 
+// Ds± → K± K∓ π±
+
+template <typename T>
+auto CtDs(const T& candidate)
+{
+  return candidate.ct(RecoDecay::getMassPDG(pdg::Code::kDs));
+}
+
+template <typename T>
+auto YDs(const T& candidate)
+{
+  return candidate.y(RecoDecay::getMassPDG(pdg::Code::kDs));
+}
+
+template <typename T>
+auto EDs(const T& candidate)
+{
+  return candidate.e(RecoDecay::getMassPDG(pdg::Code::kDs));
+}
+
+template <typename T>
+auto InvMassDs(const T& candidate)
+{
+  return candidate.m(array{RecoDecay::getMassPDG(kKPlus), RecoDecay::getMassPDG(kKPlus), RecoDecay::getMassPDG(kPiPlus)});
+}
+
 // Λc± → p± K∓ π±
 
 template <typename T>

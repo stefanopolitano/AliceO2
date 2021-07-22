@@ -50,6 +50,7 @@ struct ValidationGenLevel {
      {"hCountAverageBbar", "Event counter - Average Number Anti-Beauty quark; Events Per Collision; entries", {HistType::kTH1F, {{20, 0., 20.}}}},
      {"hCounterPerCollisionDzero", "Event counter - D0; Events Per Collision; entries", {HistType::kTH1F, {{10, -0.5, +9.5}}}},
      {"hCounterPerCollisionDplus", "Event counter - DPlus; Events Per Collision; entries", {HistType::kTH1F, {{10, -0.5, +9.5}}}},
+     {"hCounterPerCollisionDs", "Event counter - Ds; Events Per Collision; entries", {HistType::kTH1F, {{10, -0.5, +9.5}}}},
      {"hCounterPerCollisionDstar", "Event counter - Dstar; Events Per Collision; entries", {HistType::kTH1F, {{10, -0.5, +9.5}}}},
      {"hCounterPerCollisionLambdaC", "Event counter - LambdaC; Events Per Collision; entries", {HistType::kTH1F, {{10, -0.5, +9.5}}}}}};
 
@@ -64,9 +65,9 @@ struct ValidationGenLevel {
     double pxDiff, pyDiff, pzDiff;
 
     //Particles and their decay checked in the second part of the task
-    std::array<int, 4> PDGArrayParticle = {pdg::Code::kDPlus, 413, pdg::Code::kD0, pdg::Code::kLambdaCPlus};
-    std::array<std::array<int, 3>, 4> arrPDGFinal = {{{kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kPiPlus, -kKPlus}, {-kKPlus, kPiPlus, 0}, {kProton, -kKPlus, kPiPlus}}};
-    int counter[4] = {0, 0, 0, 0};
+    std::array<int, 5> PDGArrayParticle = {pdg::Code::kDPlus, 413, pdg::Code::kDs, pdg::Code::kD0, pdg::Code::kLambdaCPlus};
+    std::array<std::array<int, 3>, 4> arrPDGFinal = {{{kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kKPlus, -kKPlus}, {-kKPlus, kPiPlus, 0}, {kProton, -kKPlus, kPiPlus}}};
+    int counter[4] = {0, 0, 0, 0, 0};
     std::vector<int> listDaughters;
 
     for (auto& particle : particlesMC) {
@@ -135,9 +136,10 @@ struct ValidationGenLevel {
     registry.fill(HIST("hCountAverageCbar"), cBarPerCollision);
     registry.fill(HIST("hCountAverageBbar"), bBarPerCollision);
     registry.fill(HIST("hCounterPerCollisionDplus"), counter[0]);
-    registry.fill(HIST("hCounterPerCollisionDstar"), counter[1]);
-    registry.fill(HIST("hCounterPerCollisionDzero"), counter[2]);
-    registry.fill(HIST("hCounterPerCollisionLambdaC"), counter[3]);
+    registry.fill(HIST("hCounterPerCollisionDs"), counter[1]);
+    registry.fill(HIST("hCounterPerCollisionDstar"), counter[2]);
+    registry.fill(HIST("hCounterPerCollisionDzero"), counter[3]);
+    registry.fill(HIST("hCounterPerCollisionLambdaC"), counter[4]);
   }
 };
 
