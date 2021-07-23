@@ -332,7 +332,7 @@ static const std::vector<std::string> pTBinLabels = {
 static const std::vector<std::string> cutVarLabels = {"deltaM", "pT Pi", "pT K", "decay length", "normalized decay length XY", "cos pointing angle", "cos pointing angle XY", "max normalized deltaIP"};
 } // namespace hf_cuts_dplus_topikpi
 
-namespace hf_cuts_ds_tokkpi
+namespace hf_cuts_ds_topikk
 {
 static const int npTBins = 9;
 static const int nCutVars = 11;
@@ -357,7 +357,7 @@ constexpr double cuts[npTBins][nCutVars] = {{0.2, 0.3, 0.3, 0.02, 4., 0.92, 0.92
                                             {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.05, 0.12},  /* 5  < pT < 6  */
                                             {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.05, 0.12},  /* 6  < pT < 8  */
                                             {0.2, 0.3, 0.3, 0.03, 4., 0.90, 0.90, 0.03, 0.010, 0.00, 0.12},  /* 8  < pT < 12 */
-                                            {0.2, 0.3, 0.3, 0.05, 4., 0.85, 0.85, 0.03, 0.015, 0.00, 0.12}}  /* 12 < pT < 16 */
+                                            {0.2, 0.3, 0.3, 0.05, 4., 0.85, 0.85, 0.03, 0.015, 0.00, 0.12}};  /* 12 < pT < 16 */
 
 
 // row labels
@@ -375,7 +375,7 @@ static const std::vector<std::string> pTBinLabels = {
 
 // column labels
 static const std::vector<std::string> cutVarLabels = {"deltaM", "pT Pi", "pT K", "decay length", "normalized decay length XY", "cos pointing angle", "cos pointing angle XY", "sigma vertex", "Delta mass phi", "abs cos pointing angle ^3", "d0"};
-} // namespace hf_cuts_ds_tokkpi
+} // namespace hf_cuts_ds_topikk
 
 namespace hf_cuts_xic_topkpi
 {

@@ -66,8 +66,8 @@ struct ValidationGenLevel {
 
     //Particles and their decay checked in the second part of the task
     std::array<int, 5> PDGArrayParticle = {pdg::Code::kDPlus, 413, pdg::Code::kDs, pdg::Code::kD0, pdg::Code::kLambdaCPlus};
-    std::array<std::array<int, 3>, 4> arrPDGFinal = {{{kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kKPlus, -kKPlus}, {-kKPlus, kPiPlus, 0}, {kProton, -kKPlus, kPiPlus}}};
-    int counter[4] = {0, 0, 0, 0, 0};
+    std::array<std::array<int, 3>, 5> arrPDGFinal = {{{kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kPiPlus, -kKPlus}, {kPiPlus, kKPlus, -kKPlus}, {-kKPlus, kPiPlus, 0}, {kProton, -kKPlus, kPiPlus}}};
+    int counter[5] = {0, 0, 0, 0, 0};
     std::vector<int> listDaughters;
 
     for (auto& particle : particlesMC) {

@@ -9,8 +9,8 @@
 // granted to it by virtue of its status as an Intergovernmental Organization
 // or submit itself to any jurisdiction.
 
-/// \file HFDsToKKPiCandidateSelector.cxx
-/// \brief Ds± → K± K∓ π± selection task
+/// \file HFDsToPiKKCandidateSelector.cxx
+/// \brief Ds± → π± K± K∓ selection task
 ///
 /// \author Stefano Politanò <stefano.politano@cern.ch>, Politecnico and INFN Torino
 
@@ -23,11 +23,11 @@
 using namespace o2;
 using namespace o2::framework;
 using namespace o2::aod::hf_cand_prong3;
-using namespace o2::analysis::hf_cuts_ds_tokkpi;
+using namespace o2::analysis::hf_cuts_ds_topikk;
 
-/// Struct for applying Ds to KKpi selection cuts
-struct HFDsToKKPiCandidateSelector {
-  Produces<aod::HFSelDsToKKPiCandidate> hfSelDsToKKPiCandidate;
+/// Struct for applying Ds to piKK selection cuts
+struct HFDsToPiKKCandidateSelector {
+  Produces<aod::HFSelDsToPiKKCandidate> hfSelDsToPiKKCandidate;
 
   Configurable<double> d_pTCandMin{"d_pTCandMin", 2., "Lower bound of candidate pT"};
   Configurable<double> d_pTCandMax{"d_pTCandMax", 36., "Upper bound of candidate pT"};
@@ -42,8 +42,8 @@ struct HFDsToKKPiCandidateSelector {
   Configurable<double> d_pidTOFMaxpT{"d_pidTOFMaxpT", 20., "Upper bound of track pT for TOF PID"};
   Configurable<double> d_nSigmaTOF{"d_nSigmaTOF", 3., "Nsigma cut on TOF"};
   // topological cuts
-  Configurable<std::vector<double>> pTBins{"pTBins", std::vector<double>{hf_cuts_ds_tokkpi::pTBins_v}, "pT bin limits"};
-  Configurable<LabeledArray<double>> cuts{"ds_to_K_K_Pi_cuts", {hf_cuts_ds_tokkpi::cuts[0], npTBins, nCutVars, pTBinLabels, cutVarLabels}, "Ds candidate selection per pT bin"};
+  Configurable<std::vector<double>> pTBins{"pTBins", std::vector<double>{hf_cuts_ds_topikk::pTBins_v}, "pT bin limits"};
+  Configurable<LabeledArray<double>> cuts{"ds_to_Pi_K_K_cuts", {hf_cuts_ds_topikk::cuts[0], npTBins, nCutVars, pTBinLabels, cutVarLabels}, "Ds candidate selection per pT bin"};
 
   /*
   /// Selection on goodness of daughter tracks
@@ -79,7 +79,7 @@ struct HFDsToKKPiCandidateSelector {
       return false;
     }
     // cut on daughter pT
-    if (trackKaon1.pt() < cuts->get(pTBin, "pT Pi") || trackKaon2.pt() < cuts->get(pTBin, "pT K") || trackPion.pt() < cuts->get(pTBin, "pT Pi")) {
+    if (trackPion.pt() < cuts->get(pTBin, "pT Pi") || trackKaon1.pt() < cuts->get(pTBin, "pT K") || trackKaon2.pt() < cuts->get(pTBin, "pT K")) {
       return false;
     }
     // invariant-mass cut
@@ -119,10 +119,10 @@ struct HFDsToKKPiCandidateSelector {
     for (auto& candidate : candidates) {
 
       // final selection flag: 0 - rejected, 1 - accepted
-      auto statusDsToKKPi = 0;
+      auto statusDsToPiKK = 0;
 
-      if (!(candidate.hfflag() & 1 << DecayType::DsToKKPi)) {
-        hfSelDsToKKPiCandidate(statusDsToKKPi);
+      if (!(candidate.hfflag() & 1 << DecayType::DsToPiKK)) {
+        hfSelDsToPiKKCandidate(statusDsToPiKK);
         continue;
       }
 
@@ -135,14 +135,14 @@ struct HFDsToKKPiCandidateSelector {
       if (!daughterSelection(trackPos1) ||
           !daughterSelection(trackNeg) ||
           !daughterSelection(trackPos2)) {
-        hfSelDsToKKPiCandidate(statusDsToKKPi);
+        hfSelDsToPiKKCandidate(statusDsToPiKK);
         continue;
       }
       */
 
       // topological selection
       if (!selection(candidate, trackPos1, trackNeg, trackPos2)) {
-        hfSelDsToKKPiCandidate(statusDsToKKPi);
+        hfSelDsToPiKKCandidate(statusDsToPiKK);
         continue;
       }
 
@@ -154,12 +154,12 @@ struct HFDsToKKPiCandidateSelector {
       if (pidTrackPos1Pion == TrackSelectorPID::Status::PIDRejected ||
           pidTrackNegKaon == TrackSelectorPID::Status::PIDRejected ||
           pidTrackPos2Pion == TrackSelectorPID::Status::PIDRejected) { // exclude D±
-        hfSelDsToKKPiCandidate(statusDsToKKPi);
+        hfSelDsToPiKKCandidate(statusDsToPiKK);
         continue;
       }
 
-      statusDsToKKPi = 1;
-      hfSelDsToKKPiCandidate(statusDsToKKPi);
+      statusDsToPiKK = 1;
+      hfSelDsToPiKKCandidate(statusDsToPiKK);
     }
   }
 };
@@ -167,5 +167,5 @@ struct HFDsToKKPiCandidateSelector {
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-    adaptAnalysisTask<HFDsToKKPiCandidateSelector>(cfgc, TaskName{"hf-ds-tokkpi-candidate-selector"})};
+    adaptAnalysisTask<HFDsToPiKKCandidateSelector>(cfgc, TaskName{"hf-ds-topikk-candidate-selector"})};
 }

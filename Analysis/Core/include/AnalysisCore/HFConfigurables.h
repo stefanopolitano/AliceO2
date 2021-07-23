@@ -48,12 +48,12 @@ class HFTrackIndexSkimsCreatorConfigs
   double mInvMassDPlusToPiKPiMax = 2.0;  //original value 2.05
   double mCPADPlusToPiKPiMin = 0.5;
   double mDecLenDPlusToPiKPiMin = 0.;
-  // DsToKKPi
-  double mPtDsToKKPiMin = 4.;        //original value 0.
-  double mInvMassDsToKKPiMin = 1.75; //original value 1.7
-  double mInvMassDsToKKPiMax = 2.0;  //original value 2.05
-  double mCPADsToKKPiMin = 0.5;
-  double mDecLenDsToKKPiMin = 0.;
+  // DsToPiKK
+  double mPtDsToPiKKMin = 4.;        //original value 0.
+  double mInvMassDsToPiKKMin = 1.75; //original value 1.7
+  double mInvMassDsToPiKKMax = 2.0;  //original value 2.05
+  double mCPADsToPiKKMin = 0.5;
+  double mDecLenDsToPiKKMin = 0.;
   // LcToPKPi
   double mPtLcToPKPiMin = 4.;        //original value 0.
   double mInvMassLcToPKPiMin = 2.15; //original value 2.1

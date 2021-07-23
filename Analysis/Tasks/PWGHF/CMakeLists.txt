@@ -49,8 +49,8 @@ o2_add_dpl_workflow(hf-dplus-topikpi-candidate-selector
                     PUBLIC_LINK_LIBRARIES O2::Framework O2::AnalysisDataModel O2::AnalysisCore O2::DetectorsVertexing
                     COMPONENT_NAME Analysis)
                     
-o2_add_dpl_workflow(hf-ds-tokkpi-candidate-selector
-                    SOURCES HFDsToKKPiCandidateSelector.cxx
+o2_add_dpl_workflow(hf-ds-topikk-candidate-selector
+                    SOURCES HFDsToPiKKCandidateSelector.cxx
                     PUBLIC_LINK_LIBRARIES O2::Framework O2::AnalysisDataModel O2::AnalysisCore O2::DetectorsVertexing
                     COMPONENT_NAME Analysis)
 

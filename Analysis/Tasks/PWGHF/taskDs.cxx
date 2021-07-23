@@ -45,7 +45,7 @@ struct TaskDs {
 
   Configurable<int> d_selectionFlagDs {"d_selectionFlagDs", 1, "Selection Flag for Ds"};
   Configurable<double> cutYCandMax{"cutYCandMax", -1., "max. cand. rapidity"};
-  Configurable<std::vector<double>> bins{"pTBins", std::vector<double>{hf_cuts_ds_topikpi::pTBins_v}, "pT bin limits"};
+  Configurable<std::vector<double>> bins{"pTBins", std::vector<double>{hf_cuts_ds_topikk::pTBins_v}, "pT bin limits"};
 
   void init(o2::framework::InitContext&)
   {
@@ -64,19 +64,19 @@ struct TaskDs {
     registry.add("hDecayLengthError", "3-prong candidates;decay length error (cm);entries", {HistType::kTH2F, {{100, 0., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
     registry.add("hDecayLengthXYError", "3-prong candidates;decay length xy error (cm);entries", {HistType::kTH2F, {{100, 0., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
     registry.add("hImpactParameterError", "3-prong candidates;impact parameter error (cm);entries", {HistType::kTH2F, {{100, 0., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
-    registry.add("hdsProng0", "3-prong candidates;prong 0 DCAxy to prim. vertex (cm);entries", {HistType::kTH2F, {{100, -1., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
-    registry.add("hdsProng1", "3-prong candidates;prong 1 DCAxy to prim. vertex (cm);entries", {HistType::kTH2F, {{100, -1., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
-    registry.add("hdsProng2", "3-prong candidates;prong 2 DCAxy to prim. vertex (cm);entries", {HistType::kTH2F, {{100, -1., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
+    registry.add("hDsProng0", "3-prong candidates;prong 0 DCAxy to prim. vertex (cm);entries", {HistType::kTH2F, {{100, -1., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
+    registry.add("hDsProng1", "3-prong candidates;prong 1 DCAxy to prim. vertex (cm);entries", {HistType::kTH2F, {{100, -1., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
+    registry.add("hDsProng2", "3-prong candidates;prong 2 DCAxy to prim. vertex (cm);entries", {HistType::kTH2F, {{100, -1., 1.}, {vbins, "#it{p}_{T} (GeV/#it{c})"}}});
     //TODO: update missing variables
   }
 
-  Filter filterSelectCandidates = (aod::hf_selcandidate_ds::isSelDsToKKPi >= d_selectionFlagDs);
+  Filter filterSelectCandidates = (aod::hf_selcandidate_ds::isSelDsToPiKK >= d_selectionFlagDs);
 
-  void process(soa::Filtered<soa::Join<aod::HfCandProng3, aod::HFSelDsToKKPiCandidate>> const& candidates)
+  void process(soa::Filtered<soa::Join<aod::HfCandProng3, aod::HFSelDsToPiKKCandidate>> const& candidates)
   {
     for (auto& candidate : candidates) {
       //not possible in Filter since expressions do not support binary operators
-      if (!(candidate.hfflag() & 1 << DecayType::DsToKKPi)) {
+      if (!(candidate.hfflag() & 1 << DecayType::DsToPiKK)) {
         continue;
       }
       if (cutYCandMax >= 0. && std::abs(YDs(candidate)) > cutYCandMax) {
@@ -102,9 +102,9 @@ struct TaskDs {
       registry.fill(HIST("hPtProng0"), candidate.ptProng0());
       registry.fill(HIST("hPtProng1"), candidate.ptProng1());
       registry.fill(HIST("hPtProng2"), candidate.ptProng2());
-      registry.fill(HIST("hdsProng0"), candidate.impactParameter0(), candidate.pt());
-      registry.fill(HIST("hdsProng1"), candidate.impactParameter1(), candidate.pt());
-      registry.fill(HIST("hdsProng2"), candidate.impactParameter2(), candidate.pt());
+      registry.fill(HIST("hDsProng0"), candidate.impactParameter0(), candidate.pt());
+      registry.fill(HIST("hDsProng1"), candidate.impactParameter1(), candidate.pt());
+      registry.fill(HIST("hDsProng2"), candidate.impactParameter2(), candidate.pt());
     }
   }
 };
@@ -126,22 +126,22 @@ struct CtDsTaskDsMC {
   Configurable<int> d_selectionFlagDs{"d_selectionFlagDs", 1, "Selection Flag for Ds"};
   Configurable<double> cutYCandMax{"cutYCandMax", -1., "max. cand. rapidity"};
 
-  Filter filterSelectCandidates = (aod::hf_selcandidate_ds::isSelDsToKKPi >= d_selectionFlagDs);
+  Filter filterSelectCandidates = (aod::hf_selcandidate_ds::isSelDsToPiKK >= d_selectionFlagDs);
 
-  void process(soa::Filtered<soa::Join<aod::HfCandProng3, aod::HFSelDsToKKPiCandidate, aod::HfCandProng3MCRec>> const& candidates,
+  void process(soa::Filtered<soa::Join<aod::HfCandProng3, aod::HFSelDsToPiKKCandidate, aod::HfCandProng3MCRec>> const& candidates,
                soa::Join<aod::McParticles, aod::HfCandProng3MCGen> const& particlesMC, aod::BigTracksMC const& tracks)
   {
     // MC rec.
     //Printf("MC Candidates: %d", candidates.size());
     for (auto& candidate : candidates) {
       //not possible in Filter since expressions do not support binary operators
-      if (!(candidate.hfflag() & 1 << DecayType::DsToKKPi)) {
+      if (!(candidate.hfflag() & 1 << DecayType::DsToPiKK)) {
         continue;
       }
       if (cutYCandMax >= 0. && std::abs(YDs(candidate)) > cutYCandMax) {
         continue;
       }
-      if (std::abs(candidate.flagMCMatchRec()) == 1 << DecayType::DsToKKPi) {
+      if (std::abs(candidate.flagMCMatchRec()) == 1 << DecayType::DsToPiKK) {
         // Get the corresponding MC particle.
         auto indexMother = RecoDecay::getMother(particlesMC, candidate.index0_as<aod::BigTracksMC>().mcParticle_as<soa::Join<aod::McParticles, aod::HfCandProng3MCGen>>(), pdg::Code::kDs, true);
         auto particleMother = particlesMC.iteratorAt(indexMother);
@@ -158,7 +158,7 @@ struct CtDsTaskDsMC {
     // MC gen.
     //Printf("MC Particles: %d", particlesMC.size());
     for (auto& particle : particlesMC) {
-      if (std::abs(particle.flagMCMatchGen()) == 1 << DecayType::DsToKKPi) {
+      if (std::abs(particle.flagMCMatchGen()) == 1 << DecayType::DsToPiKK) {
         if (cutYCandMax >= 0. && std::abs(RecoDecay::Y(array{particle.px(), particle.py(), particle.pz()}, RecoDecay::getMassPDG(particle.pdgCode()))) > cutYCandMax) {
           continue;
         }
