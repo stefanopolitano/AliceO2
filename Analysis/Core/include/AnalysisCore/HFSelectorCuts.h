@@ -334,7 +334,7 @@ static const std::vector<std::string> cutVarLabels = {"deltaM", "pT Pi", "pT K",
 
 namespace hf_cuts_ds_topikk
 {
-static const int npTBins = 9;
+static const int npTBins = 7;
 static const int nCutVars = 11;
 // default values for the pT bin edges (can be used to configure histogram axis)
 // offset by 1 from the bin numbers in cuts array
@@ -368,10 +368,7 @@ static const std::vector<std::string> pTBinLabels = {
   "pT bin 3",
   "pT bin 4",
   "pT bin 5",
-  "pT bin 6",
-  "pT bin 7",
-  "pT bin 8",
-  "pT bin 9"};
+  "pT bin 6"};
 
 // column labels
 static const std::vector<std::string> cutVarLabels = {"deltaM", "pT Pi", "pT K", "decay length", "normalized decay length XY", "cos pointing angle", "cos pointing angle XY", "sigma vertex", "Delta mass phi", "abs cos pointing angle ^3", "d0"};

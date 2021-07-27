@@ -70,7 +70,7 @@ DECLARE_SOA_COLUMN(JpsiToEEFlag, jpsiToEEFlag, uint8_t); //!
 
 DECLARE_SOA_COLUMN(DPlusPiKPiFlag, dPlusPiKPiFlag, uint8_t); //!
 DECLARE_SOA_COLUMN(LcPKPiFlag, lcPKPiFlag, uint8_t);         //!
-DECLARE_SOA_COLUMN(DsKKPiFlag, dsKKPiFlag, uint8_t);         //!
+DECLARE_SOA_COLUMN(DsPiKKFlag, dsPiKKFlag, uint8_t);         //!
 DECLARE_SOA_COLUMN(XicToPKPiFlag, xicToPKPiFlag, uint8_t);   //!
 } // namespace hf_track_index
 
@@ -97,7 +97,7 @@ DECLARE_SOA_TABLE(HfTrackIndexProng3, "AOD", "HFTRACKIDXP3", //!
 DECLARE_SOA_TABLE(HfCutStatusProng3, "AOD", "HFCUTSTATUSP3", //!
                   hf_track_index::DPlusPiKPiFlag,
                   hf_track_index::LcPKPiFlag,
-                  hf_track_index::DsKKPiFlag,
+                  hf_track_index::DsPiKKFlag,
                   hf_track_index::XicToPKPiFlag);
 
 // general decay properties
@@ -532,7 +532,7 @@ auto InvMassDPlus(const T& candidate)
   return candidate.m(array{RecoDecay::getMassPDG(kPiPlus), RecoDecay::getMassPDG(kKPlus), RecoDecay::getMassPDG(kPiPlus)});
 }
 
-// Ds± → K± K∓ π±
+// Ds± → π± K± K∓
 
 template <typename T>
 auto CtDs(const T& candidate)

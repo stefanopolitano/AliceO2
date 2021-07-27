@@ -43,7 +43,7 @@ struct HFDsToPiKKCandidateSelector {
   Configurable<double> d_nSigmaTOF{"d_nSigmaTOF", 3., "Nsigma cut on TOF"};
   // topological cuts
   Configurable<std::vector<double>> pTBins{"pTBins", std::vector<double>{hf_cuts_ds_topikk::pTBins_v}, "pT bin limits"};
-  Configurable<LabeledArray<double>> cuts{"ds_to_Pi_K_K_cuts", {hf_cuts_ds_topikk::cuts[0], npTBins, nCutVars, pTBinLabels, cutVarLabels}, "Ds candidate selection per pT bin"};
+  Configurable<LabeledArray<double>> cuts{"Ds_to_Pi_K_K_cuts", {hf_cuts_ds_topikk::cuts[0], npTBins, nCutVars, pTBinLabels, cutVarLabels}, "Ds candidate selection per pT bin"};
 
   /*
   /// Selection on goodness of daughter tracks
@@ -62,12 +62,12 @@ struct HFDsToPiKKCandidateSelector {
 
   /// Candidate selections
   /// \param candidate is candidate
+  /// \param trackPion is the track with the pion hypothesis
   /// \param trackKaon1 is the first track with the kaon hypothesis
   /// \param trackKaon2 is the second track with the kaon hypothesis
-  /// \param trackPion is the track with the pion hypothesis
   /// \return true if candidate passes all cuts
   template <typename T1, typename T2>
-  bool selection(const T1& candidate, const T2& trackKaon1, const T2& trackKaon2, const T2& trackPion)
+  bool selection(const T1& candidate, const T2& trackPion, const T2& trackKaon1, const T2& trackKaon2)
   {
     auto candpT = candidate.pt();
     int pTBin = findBin(pTBins, candpT);
@@ -147,13 +147,13 @@ struct HFDsToPiKKCandidateSelector {
       }
 
       // track-level PID selection
-      int pidTrackPos1Pion = selectorPion.getStatusTrackPIDAll(trackPos1);
-      int pidTrackNegKaon = selectorKaon.getStatusTrackPIDAll(trackNeg);
-      int pidTrackPos2Pion = selectorPion.getStatusTrackPIDAll(trackPos2);
+      int pidTrackPosPion = selectorPion.getStatusTrackPIDAll(trackPos1);
+      int pidTrackNeg1Kaon = selectorKaon.getStatusTrackPIDAll(trackNeg);
+      int pidTrackPos2Kaon = selectorKaon.getStatusTrackPIDAll(trackPos2);
 
-      if (pidTrackPos1Pion == TrackSelectorPID::Status::PIDRejected ||
-          pidTrackNegKaon == TrackSelectorPID::Status::PIDRejected ||
-          pidTrackPos2Pion == TrackSelectorPID::Status::PIDRejected) { // exclude D±
+      if (pidTrackPosPion == TrackSelectorPID::Status::PIDRejected ||
+          pidTrackNeg1Kaon == TrackSelectorPID::Status::PIDRejected ||
+          pidTrackPos2Kaon == TrackSelectorPID::Status::PIDRejected) { // exclude D±
         hfSelDsToPiKKCandidate(statusDsToPiKK);
         continue;
       }
