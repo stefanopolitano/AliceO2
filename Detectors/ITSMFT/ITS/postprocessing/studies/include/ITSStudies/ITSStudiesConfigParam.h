@@ -73,6 +73,12 @@ struct ITSAvgClusSizeParamConfig : public o2::conf::ConfigurableParamHelper<ITSA
   O2ParamDef(ITSAvgClusSizeParamConfig, "ITSAvgClusSizeParam");
 };
 
+struct ITSOccupancyParamConfig : public o2::conf::ConfigurableParamHelper<ITSOccupancyParamConfig> {
+  std::string outFileName = "its_occupancy.root";
+
+  O2ParamDef(ITSOccupancyParamConfig, "ITSOccupancyParam");
+};
+
 struct ITSImpactParameterParamConfig : public o2::conf::ConfigurableParamHelper<ITSImpactParameterParamConfig> {
   std::string outFileName = "its_ImpParameter.root";
   int minNumberOfContributors = 0;

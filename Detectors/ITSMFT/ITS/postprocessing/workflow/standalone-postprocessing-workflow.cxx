@@ -91,7 +91,7 @@ WorkflowSpec defineDataProcessing(ConfigContext const& configcontext)
   }
   if (configcontext.options().get<bool>("occupancy-study")) {
     anyStudy = true;
-    specs.emplace_back(o2::its::study::getOccupancyStudy(srcTrc, srcCls, useMC, mcKinematicsReader));
+    specs.emplace_back(o2::its::study::getOccupancyStudy(srcTrc, srcCls, useMC));
   }
   if (!anyStudy) {
     LOGP(info, "No study selected, dryrunning");

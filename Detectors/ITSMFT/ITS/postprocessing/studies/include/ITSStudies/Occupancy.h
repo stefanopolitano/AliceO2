@@ -24,7 +24,7 @@ namespace study
 {
 using mask_t = o2::dataformats::GlobalTrackID::mask_t;
 
-o2::framework::DataProcessorSpec getOcccupancy()
+o2::framework::DataProcessorSpec getOccupancyStudy(mask_t srcTracksMask, mask_t srcClustersMask, bool useMC);
 } // namespace study
 } // namespace its
 } // namespace o2
