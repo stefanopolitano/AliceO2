@@ -21,6 +21,7 @@
 #include "ITSStudies/ImpactParameter.h"
 #include "ITSStudies/AvgClusSize.h"
 #include "ITSStudies/TrackCheck.h"
+#include "ITSStudies/Occupancy.h"
 #include "Steer/MCKinematicsReader.h"
 
 using namespace o2::framework;
@@ -43,6 +44,7 @@ void customize(std::vector<ConfigParamSpec>& workflowOptions)
     {"disable-mc", VariantType::Bool, false, {"disable MC propagation even if available"}},
     {"cluster-size-study", VariantType::Bool, false, {"Perform the average cluster size study"}},
     {"track-study", VariantType::Bool, false, {"Perform the track study"}},
+    {"occupancy-study", VariantType::Bool, false, {"Perform the occupancy study"}},
     {"impact-parameter-study", VariantType::Bool, false, {"Perform the impact parameter study"}},
     {"configKeyValues", VariantType::String, "", {"Semicolon separated key=value strings ..."}}};
   o2::raw::HBFUtilsInitializer::addConfigOption(options, "o2_tfidinfo.root");
@@ -86,6 +88,10 @@ WorkflowSpec defineDataProcessing(ConfigContext const& configcontext)
   if (configcontext.options().get<bool>("track-study")) {
     anyStudy = true;
     specs.emplace_back(o2::its::study::getTrackCheckStudy(GID::getSourcesMask("ITS"), GID::getSourcesMask("ITS"), useMC, mcKinematicsReader));
+  }
+  if (configcontext.options().get<bool>("occupancy-study")) {
+    anyStudy = true;
+    specs.emplace_back(o2::its::study::getOccupancyStudy(srcTrc, srcCls, useMC, mcKinematicsReader));
   }
   if (!anyStudy) {
     LOGP(info, "No study selected, dryrunning");

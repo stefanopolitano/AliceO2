@@ -13,6 +13,7 @@ o2_add_library(ITSPostprocessing
                SOURCES src/ImpactParameter.cxx
                        src/AvgClusSize.cxx
                        src/ITSStudiesConfigParam.cxx
+                       src/Occupancy.cxx
                        src/TrackCheck.cxx
                        src/Helpers.cxx
                PUBLIC_LINK_LIBRARIES O2::GlobalTracking
@@ -26,4 +27,5 @@ o2_target_root_dictionary(ITSPostprocessing
                 HEADERS include/ITSStudies/ITSStudiesConfigParam.h
                         include/ITSStudies/TrackCuts.h
                         include/ITSStudies/TrackMethods.h
+                        include/ITSStudies/Occupancy.h
                 LINKDEF src/ITSStudiesLinkDef.h)
