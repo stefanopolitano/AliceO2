@@ -42,12 +42,22 @@ void customize(std::vector<ConfigParamSpec>& workflowOptions)
     {"cluster-sources", VariantType::String, std::string{"ITS"}, {"comma-separated list of cluster sources to use"}},
     {"disable-root-input", VariantType::Bool, false, {"disable root-files input reader"}},
     {"disable-mc", VariantType::Bool, false, {"disable MC propagation even if available"}},
+    {"disable-tracking", VariantType::Bool, false, {"disable MC propagation even if available"}},
     {"cluster-size-study", VariantType::Bool, false, {"Perform the average cluster size study"}},
     {"track-study", VariantType::Bool, false, {"Perform the track study"}},
     {"occupancy-study", VariantType::Bool, false, {"Perform the occupancy study"}},
     {"impact-parameter-study", VariantType::Bool, false, {"Perform the impact parameter study"}},
     {"configKeyValues", VariantType::String, "", {"Semicolon separated key=value strings ..."}}};
-  o2::raw::HBFUtilsInitializer::addConfigOption(options, "o2_tfidinfo.root");
+
+  // add the option to match the tf id info
+  bool useMC = !options[3].defaultValue.get<bool>();
+  if (useMC) {
+    LOG(info) << "Using MC: adding o2simdigitizerworkflow_configuration.ini";
+    o2::raw::HBFUtilsInitializer::addConfigOption(options, "o2simdigitizerworkflow_configuration.ini");
+  } else {
+    LOG(info) << "Using data: adding o2_tfidinfo.root";
+    o2::raw::HBFUtilsInitializer::addConfigOption(options, "o2_tfidinfo.root");
+  }
   std::swap(workflowOptions, options);
 }
 
@@ -91,7 +101,7 @@ WorkflowSpec defineDataProcessing(ConfigContext const& configcontext)
   }
   if (configcontext.options().get<bool>("occupancy-study")) {
     anyStudy = true;
-    specs.emplace_back(o2::its::study::getOccupancyStudy(srcTrc, srcCls, useMC));
+    specs.emplace_back(o2::its::study::getOccupancyStudy(srcCls, useMC));
   }
   if (!anyStudy) {
     LOGP(info, "No study selected, dryrunning");

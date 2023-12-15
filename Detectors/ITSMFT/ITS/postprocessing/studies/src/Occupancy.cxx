@@ -78,6 +78,9 @@ class Occupancy : public Task
   void setClusterDictionary(const o2::itsmft::TopologyDictionary* d) { mDict = d; }
 
  private:
+  int tfCounter = 0;
+  int pvCounter = 0;
+
   // Other functions
   void process(o2::globaltracking::RecoContainer&);
 
@@ -91,6 +94,7 @@ class Occupancy : public Task
 
   // Running options
   bool mUseMC;
+  bool mSuppressNoise = false; // Suppress noise clusters (skip clusters with size 1)
 
   // Data
   std::shared_ptr<o2::base::GRPGeomRequest> mGGCCDBRequest;
@@ -103,36 +107,41 @@ class Occupancy : public Task
   // Output plots
   std::unique_ptr<o2::utils::TreeStreamRedirector> mDBGOut;
   std::vector<TH2F*> mOccupancyHistos{};
+  std::unique_ptr<TH1F> mNormalisationCounter{};
   std::string mOutName;
   std::shared_ptr<o2::steer::MCKinematicsReader> mKineReader;
 };
 
 void Occupancy::init(InitContext& ic)
 {
+  LOG(info) << "Initialising";
   o2::base::GRPGeomHelper::instance().setRequest(mGGCCDBRequest);
   prepareOutput();
 }
 
 void Occupancy::prepareOutput()
 {
+  LOG(info) << "Preparing output";
   auto& params = o2::its::study::ITSOccupancyParamConfig::Instance();
   mOutName = params.outFileName;
   mDBGOut = std::make_unique<o2::utils::TreeStreamRedirector>(mOutName.c_str(), "recreate");
 
-  std::vector<int> nStaves{12, 16, 20, 24, 30, 42, 48};
+  mNormalisationCounter = std::make_unique<TH1F>("mNormalisationCounter", "Normalisation counter", 2, 0, 2);
+  mNormalisationCounter->SetDirectory(nullptr);
+  mNormalisationCounter->GetXaxis()->SetBinLabel(1, "TF");
+  mNormalisationCounter->GetXaxis()->SetBinLabel(2, "PV");
 
+  std::vector<int> nStaves{12, 16, 20, 98, 122, 170, 194}; // L3 has 24 staves with 2 sub-staves each with 2 lines of chips each, L4 has 30 staves with 2 sub-staves each with 3 lines of chips each
+  std::vector<int> nChips{9, 9, 9, 28, 28, 49, 49}; // L3 has 4 modules with 7 chips each, L4 has 4 modules with 7 chips each
   for (int layer{0}; layer < 7; layer++) {
-    if (layer < 3) {
-      mOccupancyHistos.push_back(new TH2F(Form("Occupancy chip map L%i", layer), "; Chip ID; Stave ID; # Hits / # PVs", 9, -0.5, 8.5, nStaves[layer], -0.5, nStaves[layer] - 0.5));
-    } else {
-      mOccupancyHistos.push_back(new TH2F(Form("Occupancy chip map L%i", layer), "; Chip ID; Stave ID; #LT Cluster size #GT", 49, -0.5, 48.5, 4 * nStaves[layer], -0.5, 4 * nStaves[layer] - 0.5));
-    }
+    mOccupancyHistos.push_back(new TH2F(Form("Occupancy chip map L%i", layer), "; Chip ID; Stave ID; # Hits ", nChips[layer], -0.5, nChips[layer] - 0.5, nStaves[layer], -0.5, nStaves[layer] - 0.5));
     mOccupancyHistos[layer]->SetDirectory(nullptr);
   }
 }
 
 void Occupancy::run(ProcessingContext& pc)
 {
+  LOG(info) << "Running";
   o2::globaltracking::RecoContainer recoData;
   recoData.collectData(pc, *mDataRequest.get());
   updateTimeDependentParams(pc); // Make sure this is called after recoData.collectData, which may load some conditions
@@ -163,6 +172,7 @@ void Occupancy::fillIBmap(TH2F* histo, int sta, int chipInMod, float weight)
 
 void Occupancy::fillOBmap(TH2F* histo, int sta, int chipInMod, float weight, int ssta, int mod)
 {
+  // In the OB 14 Pixel Chips are aligned in 2 parallel rows of 7 chip for 7 modules
   auto xCoord = chipInMod < 7 ? (mod - 1) * 7 + chipInMod : (mod - 1) * 7 + 14 - chipInMod;
   auto yCoord = 4 * sta + ssta * 2 + 1 * (chipInMod < 7);
   histo->Fill(xCoord, yCoord, weight);
@@ -170,11 +180,14 @@ void Occupancy::fillOBmap(TH2F* histo, int sta, int chipInMod, float weight, int
 
 void Occupancy::process(o2::globaltracking::RecoContainer& recoData)
 {
+  LOG(info) << "Processing";
   auto& params = o2::its::study::ITSOccupancyParamConfig::Instance();
   bool isMCTarget = false;
   PVertex pv;
 
+  LOG(info) << "Processing event";
   auto compClus = recoData.getITSClusters();
+  LOG(info) << "Number of clusters " << compClus.size();
   getClusters(compClus, 1.); // Default weight is 1
   saveHistograms();
 }
@@ -190,6 +203,7 @@ void Occupancy::updateTimeDependentParams(ProcessingContext& pc)
   }
 }
 
+
 void Occupancy::saveHistograms()
 {
   mDBGOut.reset();
@@ -198,9 +212,11 @@ void Occupancy::saveHistograms()
   for (auto& histo : mOccupancyHistos) {
     histo->Write();
   }
-
+  mNormalisationCounter->SetBinContent(1, tfCounter);
+  mNormalisationCounter->Write();
   fout.Close();
 }
+
 
 void Occupancy::finaliseCCDB(ConcreteDataMatcher& matcher, void* obj)
 {
@@ -214,14 +230,13 @@ void Occupancy::finaliseCCDB(ConcreteDataMatcher& matcher, void* obj)
   }
 }
 
-DataProcessorSpec getOccupancyStudy(mask_t srcTracksMask, mask_t srcClustersMask, bool useMC)
+DataProcessorSpec getOccupancyStudy(mask_t srcClustersMask, bool useMC)
 {
   std::vector<OutputSpec> outputs;
   auto dataRequest = std::make_shared<DataRequest>();
-  dataRequest->requestTracks(srcTracksMask, useMC);
   dataRequest->requestClusters(srcClustersMask, useMC);
   // dataRequest->requestPrimaryVerterticesTMP(useMC);
-
+  LOG(info) << "Requesting clusters";
   auto ggRequest = std::make_shared<o2::base::GRPGeomRequest>(false,                             // orbitResetTime
                                                               true,                              // GRPECS=true
                                                               false,                             // GRPLHCIF
@@ -230,6 +245,7 @@ DataProcessorSpec getOccupancyStudy(mask_t srcTracksMask, mask_t srcClustersMask
                                                               o2::base::GRPGeomRequest::Aligned, // geometry
                                                               dataRequest->inputs,
                                                               true);
+  LOG(info) << "Requesting GRPGeomRequest";
   return DataProcessorSpec{
     "its-study-Occupancy",
     dataRequest->inputs,
